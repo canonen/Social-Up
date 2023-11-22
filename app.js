@@ -11,6 +11,9 @@ app.use(express.static('public'));
 
 env = process.env
 
+app.get("/login",(req,res)=>{
+    res.render("login.ejs")
+})
 
 
 app.get("/",(req,res)=>{

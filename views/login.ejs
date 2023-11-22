@@ -1,0 +1,88 @@
+<%-include("navbar.ejs") %>
+
+<style>
+    body, html {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        background-image: url("/images/login-background.png");
+        color: white;
+    }
+
+    .main-container {
+        display: flex;
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+    }
+
+    .login-container {
+        height: 60%;
+        width: 25%;
+        min-width: 240px;
+        background-color: rgba(50, 50, 50, 0.9);
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    input {
+        min-width: 200px;
+    }
+
+    hr {
+        width: 70%;
+        border: none;
+        border-top: 1px solid rgb(176, 176, 176);
+        margin: 10px auto;
+        min-width: 200px;
+    }
+
+    .mb-3 {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        margin-bottom: 0;
+        display: inline-block;
+    }
+
+    .form-group {
+        position: relative;
+    }
+
+    .reg-guide {
+        min-width: 200px;
+    }
+
+    label {
+        font-size: 18px;
+    }
+</style>
+
+<div class="main-container">
+    <div class="login-container">
+        <h2 class="mt-3">Login To Social Up 👫</h2>
+        <form class="mt-5">
+            <div class="mb-3 form-group">
+                <label for="username" class="form-label">Username</label>
+                <hr>
+                <input type="text" class="form-control" id="username" placeholder="Enter your username">
+            </div>
+            <div class="mb-3 form-group">
+                <label for="password" class="form-label">Password</label>
+                <hr>
+                <input type="password" class="form-control" id="password" placeholder="Enter your password">
+            </div>
+            <button type="submit" class="btn btn-primary login-button">Login</button>
+            <p class="mt-3 reg-guide">If you don't have an account. You can <a href="/register" style="text-decoration: none; color: rgb(73, 73, 251)">register</a> from here...</p>
+        </form>
+    </div>
+</div>
+
+
+<%- include("footer.ejs") %>
