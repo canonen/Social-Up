@@ -3,19 +3,33 @@ const app = express()
 require("dotenv").config()
 const mongoose = require("mongoose")
 
-port = process.env.PORT
-db = process.env.DB
+express.json()
+express.urlencoded({extended:true})
+app.set("view engine","ejs")
+app.use(express.static('public'));
 
+
+env = process.env
+
+
+
+app.get("/",(req,res)=>{
+    res.render("index.ejs")
+})
+
+
+
+
+//Connecting to Database
 try{
-    mongoose.connect(db).then(
-        console.log("Veritabanına bağlanıldı.")
-    )
+    mongoose.connect(env.db).then(()=>{
+        console.log("Connected to database succesfully.")
+        app.listen(env.port||"5000",()=>{
+            console.log("Server is running...")
+        })
+    })
+
 }catch (error){
     console.log(error)
 }
 
-
-app.listen((port||"5000"),()=>{
-    console.log("Sunucu çalışıyor.")
-    console.log(port)
-})
