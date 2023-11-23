@@ -2,18 +2,20 @@ const express = require("express")
 const app = express()
 require("dotenv").config()
 const mongoose = require("mongoose")
+const user_controller = require("./controllers/user-controller")
 
-express.json()
-express.urlencoded({extended:true})
+
+
+app.use(express.json())
+app.use(express.urlencoded({extended:true}))
+
 app.set("view engine","ejs")
 app.use(express.static('public'));
 
 
 env = process.env
 
-app.get("/login",(req,res)=>{
-    res.render("login.ejs")
-})
+app.use("/",user_controller)
 
 
 app.get("/",(req,res)=>{
