@@ -5,13 +5,13 @@
   <div style="width: 800px; height: 100%; background-color: yellow;">
     <div style="width: 100%;height: 100px;background-color: rgb(109, 109, 109); display: flex;flex-direction: row; justify-content: space-between;">
       <div>
-        <img src="/images/default_avatar.png" alt="User Avatar" style="width: 60px; height: 60px; border-radius: 50%; margin-left: 40px;margin-top: 20px; object-fit: cover;">
-        <img src="/images/edit.png" width="30px" height="30px" style="margin-top: 50px;">
+        <img src="<%=user.image%>" alt="User Avatar" style="width: 60px; height: 60px; border-radius: 50%; margin-left: 40px;margin-top: 20px; object-fit: cover;">
+        <img id="editProfile" src="/images/edit.png" width="30px" height="30px" style="margin-top: 50px;">
       </div>
       <div>
-        <img src="/images/edit.png" width="30px" height="30px" style="margin-top: 50px; margin-right: 10px;">
-
+        <img id="editBackground" src="/images/edit.png" width="30px" height="30px" style="margin-top: 50px; margin-right: 10px;">
       </div>
+      <input type="file" id="fileInput" style="display: none;">
     </div>
     <div class="container mt-5">
         <div class="row justify-content-center">
@@ -43,7 +43,7 @@
             <div class="card">
               <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
                 <a class="nav-link" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="display: flex; align-items: center; color: rgb(79, 78, 78); font-size: 19px;">
-                  <img src="/images/default_avatar.png" alt="User Avatar" style="width: 32px; height: 32px; border-radius: 50%; margin-right: 5px; object-fit: cover;">
+                  <img src="<%=user.image%>" alt="User Avatar" style="width: 32px; height: 32px; border-radius: 50%; margin-right: 5px; object-fit: cover;">
                   <p class="m-0 ml-1" style="font-size: 18px;">
                     <%= post.createdBy.name.charAt(0).toUpperCase() + post.createdBy.name.slice(1) %> <%= post.createdBy.surname.charAt(0).toUpperCase() + post.createdBy.surname.slice(1) %>
                   </p>
@@ -135,5 +135,6 @@
     });
 
   </script>
+  <script src="/scripts/image_upload.js"></script>
 
 <%- include("footer.ejs") %>
