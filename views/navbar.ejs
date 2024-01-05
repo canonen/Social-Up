@@ -4,31 +4,63 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+
   <title>Social Up 👫</title>
   <!--Bootstrap-->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
 
-  <!-- Navbar -->
-<div style="position: fixed;width: 100%;">
+<!-- Navbar -->
+<div style="width: 100%;">
   <nav class="navbar navbar-expand-lg navbar-light" style="background: rgb(246,223,244); background: radial-gradient(circle, rgba(246,223,244,1) 0%, rgba(249,245,235,1) 100%);">
-    <div style="text-align: center;">
-        <img src="/images/favicon.ico" alt="Logo" style="display: inline-block; vertical-align: middle;">
-        <a class="navbar-brand" href="/" style="font-style: italic; font-size: 30px; font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; display: inline-block; vertical-align: middle; text-decoration: none; color: black;">Social Up</a>
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+      <!-- Sol Tarafta Icon ve Social Up Yazısı -->
+      <div class="d-flex align-items-center">
+        <!-- Icon ve Yazı -->
+        <a class="navbar-brand" href="/" style="font-style: italic; font-size: 30px; font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif; color: black;">
+          <img src="/images/favicon.ico" alt="Logo" style="display: inline-block; vertical-align: middle; margin-right: 10px;">
+          Social Up
+        </a>
+
+        
+      </div>
+
+      <!-- Sağ Tarafta Profil Resmi, İsim-Soyisim ve Çekmece Tuşu -->
+      <div class="ml-auto align-items-center">
+        <!-- Profil Resmi, İsim-Soyisim -->
+        <% if (user) { %>
+          <div class="nav-item dropdown mr-3" style="cursor: pointer;">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="display: flex;justify-content: center; align-items: center;color:rgb(79, 78, 78); font-size: 19px;">
+              <img src="/images/default_avatar.png" alt="User Avatar" style="width: 32px; height: 32px; border-radius: 50%; margin-right: 5px;">
+              <p class="m-0 ml-1">
+                <%= user.name.charAt(0).toUpperCase() + user.name.slice(1) %> <%= user.surname.charAt(0).toUpperCase() + user.surname.slice(1) %>
+              </p>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="userDropdown">
+              <a class="dropdown-item" href="/profile">Profile</a>
+              <a class="dropdown-item" href="#">Settings</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Log Out</a>
+            </div>
+          </div>
+        <% } %>
+
+        <!-- Çekmece Tuşu -->
+        
+      </div>
     </div>
+
     
-    
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-        </li>
-        <!-- Diğer navbar öğeleri -->
-      </ul>
-    </div>
   </nav>
 </div>
+
+
+
+
+
+
+
+
+
+

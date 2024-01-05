@@ -1,0 +1,139 @@
+<%- include("navbar.ejs", { user: user }) %>
+
+
+<div style="width: 100%; height: min-content; background-color: red; display: flex; justify-content: center; align-items: center;">
+  <div style="width: 800px; height: 100%; background-color: yellow;">
+    <div style="width: 100%;height: 100px;background-color: rgb(109, 109, 109); display: flex;flex-direction: row; justify-content: space-between;">
+      <div>
+        <img src="/images/default_avatar.png" alt="User Avatar" style="width: 60px; height: 60px; border-radius: 50%; margin-left: 40px;margin-top: 20px; object-fit: cover;">
+        <img src="/images/edit.png" width="30px" height="30px" style="margin-top: 50px;">
+      </div>
+      <div>
+        <img src="/images/edit.png" width="30px" height="30px" style="margin-top: 50px; margin-right: 10px;">
+
+      </div>
+    </div>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+          <div class="col-md-8">
+            <div class="card">
+              <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                Create New Post...
+              </div>
+              <div class="card-body" style="height: 400px;">
+                <form  style="height: 100%;"   class="mt-2" action="/post-upload" method="post" enctype="multipart/form-data">
+                    <textarea style="width: 100%;height: 70%;" name="text"></textarea>
+                    <label for="image">Upload image:</label>
+                    <input type="file" id="image" name="image" accept="image/*">
+                    <div style="width: 100%;display: flex; justify-content: center; align-items: center;">
+                        <button type="submit" class="btn btn-primary login-button mt-2">Submit</button>
+                    </div>
+                    
+                  </form>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    <% for(let post of posts){ %>
+      <div class="container mt-4 mb-2">
+        <div class="row justify-content-center">
+          <div class="col-md-8">
+            <div class="card">
+              <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                <a class="nav-link" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="display: flex; align-items: center; color: rgb(79, 78, 78); font-size: 19px;">
+                  <img src="/images/default_avatar.png" alt="User Avatar" style="width: 32px; height: 32px; border-radius: 50%; margin-right: 5px; object-fit: cover;">
+                  <p class="m-0 ml-1" style="font-size: 18px;">
+                    <%= post.createdBy.name.charAt(0).toUpperCase() + post.createdBy.name.slice(1) %> <%= post.createdBy.surname.charAt(0).toUpperCase() + post.createdBy.surname.slice(1) %>
+                  </p>
+                </a>
+                <div class="text-muted">
+                  <%= post.createdAt %>
+                </div>
+              </div>
+              <div class="card-body">
+                <p class="card-text"><%= post.post_text %></p>
+                <% if(post.image){ %>
+                  <img src="<%= post.image %>" width="100%" height="100%" >
+                <% } %>
+              </div>
+              <div class="card-footer" style="display: flex;">
+                <% if(post.likedBy&&post.likedBy.includes(user._id)){ %>
+                  <p style="color: red;"><%=post.likedBy.length%></p>
+                <% }else if(post.likedBy){ %>
+                  <p style="color: black;"><%=post.likedBy.length%></p>
+                <% }else{ %>
+                  <p style="color:black">0</p>
+                <% } %>
+                
+                
+                
+                <img class="ml-1 like-button" style="cursor: pointer;" width="24px" height="24px" src="/images/like.png" data-postid="<%= post._id %>">
+                <img class="ml-1" style="cursor: pointer;" width="24px" height="24px" src="/images/comments.png">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <%}%>
+  </div>
+</div>
+
+  <script>
+
+    const likedPosts = new Set(); // Beğenilen gönderilerin ID'lerini takip eder
+
+    
+    function likePost(postId,likeCountElement) {
+      
+      if (likeCountElement.style.color!=="red") {
+        // Beğenilmemişse
+        const data = { post_id: postId };
+        const jsonData = JSON.stringify(data);
+
+        const xhttp = new XMLHttpRequest();
+        xhttp.open("POST", "/like");
+        xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhttp.send(jsonData);
+
+        likedPosts.add(postId); // ID'yi ekleyerek beğenildi olarak işaretle
+        const currentLikes = parseInt(likeCountElement.textContent);
+        likeCountElement.textContent = currentLikes + 1; // Beğeni sayısını güncelle
+        likeCountElement.style.color = "red"
+
+
+        // Burada isterseniz beğeni bilgisini sunucuya göndererek veritabanını güncelleyebilirsiniz
+      }
+      else{
+        const data = { post_id: postId };
+        const jsonData = JSON.stringify(data);
+
+        const xhttp = new XMLHttpRequest();
+        xhttp.open("DELETE", "/like");
+        xhttp.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhttp.send(jsonData);
+
+        likedPosts.delete(postId)
+        const currentLikes = parseInt(likeCountElement.textContent);
+        likeCountElement.style.color = "black"
+        likeCountElement.textContent = currentLikes - 1;
+      }
+      
+    }
+    document.addEventListener("DOMContentLoaded", function() {
+      const likeButtons = document.querySelectorAll(".like-button");
+    
+      likeButtons.forEach(button => {
+        button.addEventListener("click", function() {
+          const postId = this.getAttribute("data-postid");
+          const likeCountElement = this.previousElementSibling;
+          likePost(postId,likeCountElement)
+    
+        });
+      });
+    });
+
+  </script>
+
+<%- include("footer.ejs") %>

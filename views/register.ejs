@@ -1,4 +1,4 @@
-<%-include("navbar.ejs") %>
+<%-include("navbar.ejs",{user:null}) %>
 
 <style>
     body, html {
@@ -22,7 +22,7 @@
     }
 
     .login-container {
-        height: max-content;
+        height: fit-content;
         width: 25%;
         min-width: 240px;
         background-color: rgba(50, 50, 50, 0.9);
@@ -72,12 +72,12 @@
                 <div class="mb-3">
                     <label for="name" class="form-label">Name</label>
                     <hr>
-                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name">
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required value="<%=body&&body.name ||""%>">
                 </div>
                 <div class="mb-3">
                     <label for="surname" class="form-label">Surname</label>
                     <hr>
-                    <input type="text" class="form-control" id="surname" name="surname" placeholder="Enter your surname">
+                    <input type="text" class="form-control" id="surname" name="surname" placeholder="Enter your surname" required value="<%=body&&body.surname ||""%>">
                 </div>
             </div>
             
@@ -85,20 +85,55 @@
             <div class="mb-3 form-group">
                 <label for="email" class="form-label">Email Adress</label>
                 <hr>
-                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email">
+                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required value="<%=body&&body.email ||""%>">
             </div>
             <div class="mb-3 form-group">
                 <label for="password" class="form-label">Password</label>
                 <hr>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password">
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required value="<%=body&&body.password ||""%>">
             </div>
             <div class="mb-3 form-group">
-                <label for="password" class="form-label">Password (Again)</label>
+                <label for="password_again" class="form-label">Password (Again)</label>
                 <hr>
-                <input type="password" class="form-control" id="password" name="password_again" placeholder="Enter your password">
+                <input type="password" class="form-control" id="password_again" name="password_again" placeholder="Enter your password" required value="<%=body&&body.password_again ||""%>">
             </div>
             <button type="submit" class="btn btn-primary login-button mt-2">Register</button>
             <p class="mt-3 reg-guide">If you have an account already. You can <a href="/login" style="text-decoration: none; color: rgb(0, 252, 244)">login</a> from here...</p>
+                
+                
+            
+
+            <% if (messages && messages.length > 0) { %>
+                <% for (let i = 0; i < messages.length; i++) { %>
+                    <% if (messages[i].status === "error") { %>
+                        <div class="alert alert-danger error-message" role="alert">
+                            <%= messages[i].message %>
+                            <% if (messages[i].code == "601" || messages[i].code =="602") {%>
+                                <script>
+                                    document.getElementById("password").style.border="1.5px solid red";
+                                    document.getElementById("password_again").style.border="1.5px solid red";
+
+                                </script>
+                            <% } %>
+                        </div>
+                    <% } else if (messages[i].status === "success") { %>
+                        <div class="alert alert-success" role="alert">
+                            <%= messages[i].message %>
+                        </div>
+                        <script>
+                            document.querySelectorAll('.error-message').forEach(function(el) {
+                                el.style.display = 'none';
+                            });
+                            document.getElementById("password").style.border="1px solid #ced4da";
+                            document.getElementById("password_again").style.border="1px solid #ced4da";
+                        </script>
+                        <button type="button" class="btn btn-primary login-button mt-2">Go to the login page</button>
+                    <% } %>
+                <% } %>
+            <% } %>
+            
+            
+             
         </form>
     </div>
 </div>
