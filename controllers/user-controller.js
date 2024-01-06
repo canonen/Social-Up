@@ -88,6 +88,12 @@ router.post("/register",async(req,res)=>{
         return res.render("register.ejs",{messages,body})
     }
 })
+router.get("/logout",(req,res)=>{
+    req.logOut(()=>{
+        res.redirect("/")
+    })
+    
+})
 //************************************* */
 
 router.get("/profile",async(req,res)=>{
@@ -115,8 +121,8 @@ router.post("/post-upload",upload.single('image'),(req,res)=>{
 
     if (req.file){
         const image = req.file.path
-        const textValue = req.body.text
         const imagePath = path.normalize(image).replace("\\", '/').replace("uploads/","");
+        const textValue = req.body.text
         const newPost = new Post({
             post_text: textValue,
             createdAt:formattedDate,
@@ -184,8 +190,39 @@ router.delete("/like",async(req,res)=>{
     })
     
 })
-router.post("/avatar-upload",upload.single('image'),(req,res)=>{
-    
+router.post("/avatar-upload",upload.single('image'),async(req,res)=>{
+    console.log("1")
+    if(req.file){
+        console.log("2")
+
+        await User.findById(req.user._id).then(async(user)=>{
+            const image = req.file.path
+            const imagePath = path.normalize(image).replace("\\", '/').replace("uploads/","");
+            user.image= imagePath
+            await user.save()
+            res.redirect("/profile")
+        }).catch((er)=>{
+            console.log(er)
+            res.redirect("/profile")
+        })
+    }
+})
+router.post("/background-upload",upload.single('image'),async(req,res)=>{
+    console.log("1")
+    if(req.file){
+        console.log("2")
+
+        await User.findById(req.user._id).then(async(user)=>{
+            const image = req.file.path
+            const imagePath = path.normalize(image).replace("\\", '/').replace("uploads/","");
+            user.bg_image= imagePath
+            await user.save()
+            res.redirect("/profile")
+        }).catch((er)=>{
+            console.log(er)
+            res.redirect("/profile")
+        })
+    }
 })
 
 module.exports = router
