@@ -13,11 +13,17 @@ function handleImageEdit(imageId) {
       const file = event.target.files[0];
 
       if (file) {
+        
         const formData = new FormData();
         formData.append("image",file)
 
         const xhttp = new XMLHttpRequest()
-        xhttp.open("POST","/avatar-upload")
+        if(imageId == "profileImage"){
+            xhttp.open("POST","/avatar-upload")
+        }
+        if(imageId == "backgroundImage"){
+            xhttp.open("POST","/background-upload")
+        }
         xhttp.onreadystatechange= ()=>{xhttp.readyState===4 && xhttp.status===200;location.reload()}
 
         xhttp.send(formData)
