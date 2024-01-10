@@ -5,47 +5,62 @@
   <div style="width: 800px; height: 100%; background-color: yellow;">
     
 
-    <div style="width: 100%;height: 100px; background-image:url('<%=user.bg_image%>'); background-color: rgb(109, 109, 109); display: flex;flex-direction: row; justify-content: space-between;background-size:cover; background-position: center;">
+    <div style="width: 100%; height: 100px; background-image:url('<%=targetUser.bg_image%>'); background-color: rgb(109, 109, 109); display: flex;flex-direction: row; justify-content: space-between;background-size:cover; background-position: center;">
       <div>
-        <img src="<%=user.image%>" alt="User Avatar" style="width: 60px; height: 60px; border-radius: 50%; margin-left: 40px;margin-top: 20px; object-fit: cover;">
-        <img id="editProfile" src="/images/edit.png" width="30px" height="30px" style="margin-top: 50px;">
+        <div style="display: flex; flex-direction: row;align-items: center; width: 300px;height: 60px; border-radius: 30px; background-color: rgb(46, 46, 46);margin-left: 40px;margin-top: 20px;">
+          <img src="<%= targetUser.image ?? '/images/default_avatar.png' %>" alt="User Avatar" style="width: 60px; height: 60px; border-radius: 50%;  object-fit: cover;">
+          <% if (targetUser._id.toString() === user._id.toString()) { %>
+            <img id="editProfile" src="/images/edit.png" width="30px" height="30px" style="margin-top: 40px; margin-left: -15px;">
+          <% } %>
+          <p style="color: white; font-size: 20px;" class="ml-3">
+            <%= targetUser.name.charAt(0).toUpperCase() + targetUser.name.slice(1) %> <%= targetUser.surname.charAt(0).toUpperCase() + targetUser.surname.slice(1) %>
+          </p>
+        </div>  
+
+        
+        
       </div>
       <div>
-        <img id="editBackground" src="/images/edit.png" width="30px" height="30px" style="margin-top: 50px; margin-right: 10px;">
+        <% if (targetUser._id.toString() === user._id.toString()) { %>
+          <img id="editBackground" src="/images/edit.png" width="30px" height="30px" style="margin-top: 50px; margin-right: 10px;">
+        <% } %>
       </div>
       <input type="file" id="fileInput" style="display: none;">
     </div>
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-          <div class="col-md-8">
-            <div class="card">
-              <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                Create New Post...
+    
+    <% if(targetUser._id.toString() === user._id.toString()){%>
+      <div class="container mt-5">
+          <div class="row justify-content-center">
+            <div class="col-md-8">
+              <div class="card">
+                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                  Create New Post...
+                </div>
+                <div class="card-body" style="height: 400px;">
+                  <form  style="height: 100%;"   class="mt-2" action="/post-upload" method="post" enctype="multipart/form-data">
+                      <textarea style="width: 100%;height: 70%;" name="text"></textarea>
+                      <label for="image">Upload image:</label>
+                      <input type="file" id="image" name="image" accept="image/*">
+                      <div style="width: 100%;display: flex; justify-content: center; align-items: center;">
+                          <button type="submit" class="btn btn-primary login-button mt-2">Submit</button>
+                      </div>
+                      
+                    </form>
+                </div>
+                
               </div>
-              <div class="card-body" style="height: 400px;">
-                <form  style="height: 100%;"   class="mt-2" action="/post-upload" method="post" enctype="multipart/form-data">
-                    <textarea style="width: 100%;height: 70%;" name="text"></textarea>
-                    <label for="image">Upload image:</label>
-                    <input type="file" id="image" name="image" accept="image/*">
-                    <div style="width: 100%;display: flex; justify-content: center; align-items: center;">
-                        <button type="submit" class="btn btn-primary login-button mt-2">Submit</button>
-                    </div>
-                    
-                  </form>
-              </div>
-              
             </div>
           </div>
         </div>
-      </div>
+    <%}%>
     <% for(let post of posts){ %>
       <div class="container mt-4 mb-2">
         <div class="row justify-content-center">
           <div class="col-md-8">
             <div class="card">
               <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                <a class="nav-link" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="display: flex; align-items: center; color: rgb(79, 78, 78); font-size: 19px; margin-left: -15px;">
-                  <img src="<%=user.image%>" alt="User Avatar" style="width: 32px; height: 32px; border-radius: 50%; margin-right: 5px; object-fit: cover;">
+                <a class="nav-link" href="/profile?userId=<%=post.createdBy._id%>"  role="button"  aria-haspopup="true" aria-expanded="false" style="display: flex; align-items: center; color: rgb(79, 78, 78); font-size: 19px; margin-left: -15px;">
+                  <img src="<%= post.createdBy.image ?? '/images/default_avatar.png' %>" alt="User Avatar" style="width: 32px; height: 32px; border-radius: 50%; margin-right: 5px; object-fit: cover;">
                   <p class="m-0 ml-1" style="font-size: 18px;">
                     <%= post.createdBy.name.charAt(0).toUpperCase() + post.createdBy.name.slice(1) %> <%= post.createdBy.surname.charAt(0).toUpperCase() + post.createdBy.surname.slice(1) %>
                   </p>
@@ -62,18 +77,53 @@
               </div>
               <div class="card-footer" style="display: flex;">
                 <% if(post.likedBy&&post.likedBy.includes(user._id)){ %>
-                  <p style="color: red;"><%=post.likedBy.length%></p>
+                  <p style="color: red;margin-top: 5px;"><%=post.likedBy.length%></p>
                 <% }else if(post.likedBy){ %>
-                  <p style="color: black;"><%=post.likedBy.length%></p>
+                  <p style="color: black;margin-top: 5px;"><%=post.likedBy.length%></p>
                 <% }else{ %>
-                  <p style="color:black">0</p>
+                  <p style="color:black; margin-top: 5px;" >0</p>
                 <% } %>
                 
                 
                 
-                <img class="ml-1 like-button" style="cursor: pointer;" width="24px" height="24px" src="/images/like.png" data-postid="<%= post._id %>">
-                <img class="ml-1" style="cursor: pointer;" width="24px" height="24px" src="/images/comments.png">
+                <img class="ml-1 like-button" style="cursor: pointer; margin-top: 5px;" width="24px" height="24px" src="/images/like.png" data-postid="<%= post._id %>">
+                <img class="ml-1" style="cursor: pointer; margin-top: 5px;" width="24px" height="24px" src="/images/comments.png">
+                <div style="width: 100%; display: flex; flex-direction: row;  align-items: center; justify-content: center;">
+                  <textarea id="comment" style="width: 90%; height: 40px; margin-left:10px; border-radius: 10px;" placeholder="Write a comment"></textarea>
+                  <img class="comment_button" src="/images/send-message.png" width="24px" height="24px" style="cursor: pointer;  margin-left: 15px;" data-postid="<%=post._id%>">
+                </div>
               </div>
+              <% console.log("Comments",post.comments)%>
+              <% if (Array.isArray(post.comments) && post.comments.length > 0){%>
+                <% for(let comment of post.comments){ %>
+                  <div class="card-footer" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                    <div style="width: 90%;background-color: gainsboro; padding: 5px; border-radius: 10px;">
+                      <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                        <a class="nav-link" href="/profile?userId=<%=comment.createdBy._id%>" role="button" aria-haspopup="true" aria-expanded="false" style="display: flex; align-items: center; color: rgb(79, 78, 78); font-size: 19px; margin-left: -15px;">
+                          <img src="<%= comment.createdBy.image ?? '/images/default_avatar.png' %>" alt="User Avatar" style="width: 32px; height: 32px; border-radius: 50%; margin-right: 5px; object-fit: cover;">
+                          <p class="m-0 ml-1" style="font-size: 18px;">
+                            <%= comment.createdBy.name.charAt(0).toUpperCase() + comment.createdBy.name.slice(1) %> <%= comment.createdBy.surname.charAt(0).toUpperCase() + comment.createdBy.surname.slice(1) %>
+                          </p>
+                        </a>
+                        
+                        <div style="display: flex; flex-direction: row; align-items: center;">
+                          <% if(comment.likedBy&&comment.likedBy.includes(user._id)){ %>
+                            <p id="comment_like_count" style="color: red;margin-top: 5px;"><%=comment.likedBy.length%></p>
+                          <% }else if(comment.likedBy){ %>
+                            <p id="comment_like_count" style="color: black;margin-top: 5px;"><%=comment.likedBy.length%></p>
+                          <% }else{ %>
+                            <p id="comment_like_count" style="color:black; margin-top: 5px;" >0</p>
+                          <% } %>
+                          <img class="ml-1 comment_like" style="cursor: pointer; margin-top: -20px;" width="24px" height="24px" src="/images/like.png" data-postid="<%=comment._id%>">
+                        </div>
+                      </div>
+                      <p style="margin-left: 5px;"><%=comment.text%></p>
+                    </div>
+                    
+                  </div>
+                <% } %>
+              <%}%>
+              
             </div>
           </div>
         </div>
@@ -138,5 +188,7 @@
 
   </script>
   <script src="/scripts/image_upload.js"></script>
+  <script src="/scripts/post_comment.js"></script>
+  <script src="/scripts/like_comment.js"></script>
 
 <%- include("footer.ejs") %>

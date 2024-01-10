@@ -6,6 +6,8 @@ const passport = require("../controllers/authentication.js")
 const multer = require("multer")
 const Post = require("../models/post.js")
 const path = require("path")
+const Comment =require("../models/comment.js")
+const { send } = require("process")
 
 //Multer
 const storage = multer.diskStorage({
@@ -97,9 +99,16 @@ router.get("/logout",(req,res)=>{
 //************************************* */
 
 router.get("/profile",async(req,res)=>{
-    const posts = await Post.find({createdBy:req.user._id}).populate("createdBy").sort({ createdAt: -1 })
-    console.log(posts)
-    res.render("profile.ejs",{user:req.user,posts:posts})
+    targetUserId=req.query.userId
+    if (targetUserId== null){
+        res.redirect("/")
+    }
+    targetUser= await User.findById(targetUserId)
+    const posts = await Post.find({ createdBy: targetUserId })
+  .populate({ path: 'createdBy', model: 'User' })
+  .populate({ path: 'comments',model:"Comment", options: { sort: { createdAt: -1 } }, populate: { path: 'createdBy', model: 'User' } })
+  .sort({ createdAt: -1 });
+    res.render("profile.ejs",{user:req.user,posts:posts,targetUser})
 })
 
 router.post("/post-upload",upload.single('image'),(req,res)=>{
@@ -128,12 +137,12 @@ router.post("/post-upload",upload.single('image'),(req,res)=>{
             createdAt:formattedDate,
             createdBy:req.user._id,
             image:imagePath,
-            comments:null,
+            comments:[],
             likedBy:[]
         }
         )
         newPost.save().then((savedpost)=>{
-            res.redirect("/profile")
+            res.redirect("/profile?userId=" + req.user._id.toString())
         }).catch((er)=>{alert("An Error Occured...")})
         console.log(image)
     }
@@ -153,14 +162,18 @@ router.post("/post-upload",upload.single('image'),(req,res)=>{
         newPost.save().then((savedpost)=>{
             
 
-            res.redirect("/profile")
+            res.redirect("/profile?userId=" + req.user._id.toString())
+
         }).catch((er)=>{alert("An Error Occured...")})
     }
 
 })
 router.post("/like",async(req,res)=>{
-    console.log("anan")
+
     await Post.findById(req.body.post_id).then(async (post)=>{
+        if (!post){
+            return
+        }
         if (post.likedBy.includes(req.user._id)){
             return
         }
@@ -174,12 +187,11 @@ router.post("/like",async(req,res)=>{
     
 })
 router.delete("/like",async(req,res)=>{
-    console.log("baban")
+
     await Post.findById(req.body.post_id).then(async(post)=>{
         if(!post.likedBy.includes(req.user._id)){
             return
         }
-        console.log("aq")
         post.likedBy = post.likedBy.filter(likedUserId=>likedUserId.toString() != req.user._id.toString())
 
         await post.save()
@@ -200,10 +212,12 @@ router.post("/avatar-upload",upload.single('image'),async(req,res)=>{
             const imagePath = path.normalize(image).replace("\\", '/').replace("uploads/","");
             user.image= imagePath
             await user.save()
-            res.redirect("/profile")
+            res.redirect("/profile?userId=" + req.user._id.toString())
+
         }).catch((er)=>{
             console.log(er)
-            res.redirect("/profile")
+            res.redirect("/profile?userId=" + req.user._id.toString())
+
         })
     }
 })
@@ -217,13 +231,84 @@ router.post("/background-upload",upload.single('image'),async(req,res)=>{
             const imagePath = path.normalize(image).replace("\\", '/').replace("uploads/","");
             user.bg_image= imagePath
             await user.save()
-            res.redirect("/profile")
+            res.redirect("/profile?userId=" + req.user._id.toString())
+
         }).catch((er)=>{
             console.log(er)
-            res.redirect("/profile")
+            res.redirect("/profile?userId=" + req.user._id.toString())
+
         })
     }
 })
+
+router.post("/post-comment",async(req,res)=>{
+    const currentDate = new Date();
+
+    const options = {
+    day: '2-digit',
+    month: '2-digit',
+    year: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    second: 'numeric'
+    };
+
+    const formattedDate = currentDate.toLocaleString('tr-TR', options);
+
+    var temp_comment = new Comment({
+        createdBy: req.user._id,
+        createdAt: formattedDate,
+        text: req.body.comment,
+        likedBy:[]
+    })
+    await temp_comment.save()
+    await Post.findById(req.body.post_id).then((post)=>{
+        if(!post){
+            return
+        }
+        post.comments.push(temp_comment._id)
+        post.save().then(res.status(200).send("OK"))
+    })
+    
+})
+
+router.post("/like-comment",async(req,res)=>{
+    const comment = await Comment.findById(req.body.comment_id)
+    comment.likedBy.push(req.user._id)
+    await comment.save()
+    res.sendStatus(200)
+})
+router.delete("/like-comment",async(req,res)=>{
+    const comment = await Comment.findById(req.body.comment_id)
+    comment.likedBy = comment.likedBy.filter(likedUserId=>likedUserId.toString() != req.user._id.toString())
+    await comment.save()
+    res.sendStatus(200)
+})
+
+router.get("/search", async (req, res) => {
+    const searchTerm = req.query.q;
+
+    // Boşluklara göre terimi ayır
+    const terms = searchTerm.split(" ");
+
+    // Her bir terim için ayrı regex oluştur
+    const regexTerms = terms.map(term => new RegExp(`^${term}`, 'i'));
+
+    // $and operatörü ile tüm regex'lerin eşleştiği kullanıcıları bul
+    const users = await User.find({
+        $and: regexTerms.map(regex => ({
+            $or: [
+                { name: { $regex: regex } },
+                { surname: { $regex: regex } }
+            ]
+        }))
+    });
+
+    console.log(users);
+    res.json(users);
+});
+
 
 module.exports = router
 
