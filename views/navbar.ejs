@@ -10,10 +10,35 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-
-<!-- Navbar -->
-<div style="width: 100%;">
-  <nav class="navbar navbar-expand-lg navbar-light" style="background: rgb(246,223,244); background: radial-gradient(circle, rgba(246,223,244,1) 0%, rgba(249,245,235,1) 100%);">
+  <style>
+    #aramaSonuclari {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      z-index: 1000;
+      background-color: white;
+      border: 1px solid #ccc;
+      padding: 10px;
+      width: 97%;
+      border-radius: 5px;
+      height: 200px;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      display: none;
+      flex-direction: column;
+      overflow-x: hidden;
+      overflow-y: visible;
+      
+    }
+    .search_user{
+      margin-top: 5px;
+      width: 100%;
+      height: 50px;
+      background-color: rgb(240, 240, 240);
+      border-radius: 5px;
+    }
+    
+  </style>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light" style="background: rgb(246,223,244); background: radial-gradient(circle, rgba(246,223,244,1) 0%, rgba(249,245,235,1) 100%);">
     <div class="container-fluid d-flex justify-content-between align-items-center">
       <!-- Sol Tarafta Icon ve Social Up Yazısı -->
       <div class="d-flex align-items-center">
@@ -22,38 +47,52 @@
           <img src="/images/favicon.ico" alt="Logo" style="display: inline-block; vertical-align: middle; margin-right: 10px;">
           Social Up
         </a>
-
-        
       </div>
 
+      <% if(user){ %>
+        <!-- Search Icon for Small Screens -->
+        <button class="navbar-toggler search-icon" type="button" data-toggle="collapse" data-target="#searchForm" aria-controls="searchForm" aria-expanded="false" aria-label="Toggle navigation" style="margin-right: 5px;">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+    
+        <!-- Search Form -->
+        <div class="collapse navbar-collapse search-form" id="searchForm">
+          <form class="form-inline my-2 my-lg-0 ml-auto" style="display: flex; flex-direction: column;">
+            <div id="search-box" style="display: flex; flex-direction: row; position: relative;">
+              <input class="form-control mr-sm-2" id="searchInput" style="width:280px !important; margin-right:5px;" type="search" placeholder="Search" aria-label="Search">
+              <div id="aramaSonuclari">
+                
+              </div>
+              
+            </div>
+          </form>
+        </div>
+      <% } %>
+  
       <!-- Sağ Tarafta Profil Resmi, İsim-Soyisim ve Çekmece Tuşu -->
       <div class="ml-auto align-items-center">
         <!-- Profil Resmi, İsim-Soyisim -->
         <% if (user) { %>
           <div class="nav-item dropdown mr-3" style="cursor: pointer;">
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="display: flex;justify-content: center; align-items: center;color:rgb(79, 78, 78); font-size: 19px;">
-              <img src="<%=user.image%>" alt="User Avatar" style="width: 32px; height: 32px; border-radius: 50%; margin-right: 5px;">
+              <img src="<%= user.image ?? '/images/default_avatar.png' %>" alt="User Avatar" style="width: 32px; height: 32px; border-radius: 50%; margin-right: 5px;">
               <p class="m-0 ml-1">
                 <%= user.name.charAt(0).toUpperCase() + user.name.slice(1) %> <%= user.surname.charAt(0).toUpperCase() + user.surname.slice(1) %>
               </p>
             </a>
             <div class="dropdown-menu" aria-labelledby="userDropdown">
-              <a class="dropdown-item" href="/profile">Profile</a>
+              <a class="dropdown-item" href="/profile?userId=<%=user._id%>">Profile</a>
               <a class="dropdown-item" href="#">Settings</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="/logout">Log Out</a>
             </div>
           </div>
         <% } %>
-
-        <!-- Çekmece Tuşu -->
-        
       </div>
     </div>
-
-    
   </nav>
-</div>
+  
+  <script src="/scripts/search.js"></script>  
 
 
 
