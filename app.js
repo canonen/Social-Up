@@ -7,6 +7,7 @@ const session = require("express-session")
 const passport = require("./controllers/authentication")
 const flash = require("express-flash")
 const User = require("./models/user")
+const post_controller = require("./controllers/post-controller")
 
 
 app.use(express.json())
@@ -42,6 +43,7 @@ app.use("/",(req,res,next)=>{
 })
 
 app.use("/",user_controller)
+app.use("/",post_controller)
 
 
 app.get("/",async (req,res)=>{
