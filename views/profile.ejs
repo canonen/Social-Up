@@ -15,7 +15,8 @@
           <p style="color: white; font-size: 20px;" class="ml-3">
             <%= targetUser.name.charAt(0).toUpperCase() + targetUser.name.slice(1) %> <%= targetUser.surname.charAt(0).toUpperCase() + targetUser.surname.slice(1) %>
           </p>
-        </div>  
+        </div>
+        
 
         
         
@@ -65,8 +66,13 @@
                     <%= post.createdBy.name.charAt(0).toUpperCase() + post.createdBy.name.slice(1) %> <%= post.createdBy.surname.charAt(0).toUpperCase() + post.createdBy.surname.slice(1) %>
                   </p>
                 </a>
-                <div class="text-muted">
-                  <%= post.createdAt %>
+                <div style="display: flex; flex-direction: row;">
+                  <div class="text-muted">
+                    <%= post.createdAt %>
+                  </div>
+                  <% if(targetUser._id.toString() ===user._id.toString()) { %>
+                    <img class="deletePost" src="/images/trash-bin.png" width="30px" height="30px" style="margin-left: 10px; cursor: pointer;" data-postid="<%=post._id %>">
+                  <% } %>
                 </div>
               </div>
               <div class="card-body">
@@ -105,16 +111,20 @@
                             <%= comment.createdBy.name.charAt(0).toUpperCase() + comment.createdBy.name.slice(1) %> <%= comment.createdBy.surname.charAt(0).toUpperCase() + comment.createdBy.surname.slice(1) %>
                           </p>
                         </a>
-                        
-                        <div style="display: flex; flex-direction: row; align-items: center;">
-                          <% if(comment.likedBy&&comment.likedBy.includes(user._id)){ %>
-                            <p id="comment_like_count" style="color: red;margin-top: 5px;"><%=comment.likedBy.length%></p>
-                          <% }else if(comment.likedBy){ %>
-                            <p id="comment_like_count" style="color: black;margin-top: 5px;"><%=comment.likedBy.length%></p>
-                          <% }else{ %>
-                            <p id="comment_like_count" style="color:black; margin-top: 5px;" >0</p>
-                          <% } %>
-                          <img class="ml-1 comment_like" style="cursor: pointer; margin-top: -20px;" width="24px" height="24px" src="/images/like.png" data-postid="<%=comment._id%>">
+                        <div style="display: flex; flex-direction: row;">
+                          <div style="display: flex; flex-direction: row; align-items: center;">
+                            <% if(comment.likedBy&&comment.likedBy.includes(user._id)){ %>
+                              <p id="comment_like_count" style="color: red;margin-top: 5px;"><%=comment.likedBy.length%></p>
+                            <% }else if(comment.likedBy){ %>
+                              <p id="comment_like_count" style="color: black;margin-top: 5px;"><%=comment.likedBy.length%></p>
+                            <% }else{ %>
+                              <p id="comment_like_count" style="color:black; margin-top: 5px;" >0</p>
+                            <% } %>
+                            <img class="ml-1 comment_like" style="cursor: pointer; margin-top: -20px;" width="24px" height="24px" src="/images/like.png" data-postid="<%=comment._id%>">
+                          </div>
+                          <% if(comment.createdBy._id.toString() ===user._id.toString()) { %>
+                            <img class="deleteComment" src="/images/trash-bin.png" width="30px" height="30px" style="margin-left: 10px; cursor: pointer;" data-postid="<%=comment._id%>">
+                          <%}%>  
                         </div>
                       </div>
                       <p style="margin-left: 5px;"><%=comment.text%></p>
@@ -190,5 +200,7 @@
   <script src="/scripts/image_upload.js"></script>
   <script src="/scripts/post_comment.js"></script>
   <script src="/scripts/like_comment.js"></script>
+  <script src="/scripts/delete_post.js"></script>
+  <script src="/scripts/delete_comment.js"></script>
 
 <%- include("footer.ejs") %>

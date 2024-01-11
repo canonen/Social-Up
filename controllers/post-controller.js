@@ -6,6 +6,7 @@ const passport = require("../controllers/authentication.js")
 const multer = require("multer")
 const Post = require("../models/post.js")
 const path = require("path")
+const mongoose = require("mongoose")
 const Comment =require("../models/comment.js")
 const { send } = require("process")
 
@@ -66,7 +67,7 @@ router.post("/post-upload",upload.single('image'),(req,res)=>{
             createdAt:formattedDate,
             createdBy:req.user._id,
             image:null,
-            comments:null,
+            comments:[],
             likedBy:[]
             
         }
@@ -160,6 +161,26 @@ router.delete("/like-comment",async(req,res)=>{
     await comment.save()
     res.sendStatus(200)
 })
+
+router.delete("/delete-post",async(req,res)=>{
+    const post = await Post.findById(req.body.postId)
+    console.log(req.body.postId)
+    console.log(post)
+    try{
+        await Comment.deleteMany({_id: {$in:post.comments}})
+    }catch{
+        
+    }
+    
+    await Post.deleteOne({_id:req.body.postId})
+    res.sendStatus(200)
+})
+
+router.delete("/delete-comment",async(req,res)=>{
+    await Comment.deleteOne({_id:req.body.commentId})
+    res.sendStatus(200)
+})
+
 
 
 module.exports = router
