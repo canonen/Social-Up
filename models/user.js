@@ -6,7 +6,8 @@ const user_schema = mongoose.Schema({
     email: String,
     password: String,
     image:String,
-    bg_image:String
+    bg_image:String,
+    friends:[{type:mongoose.Schema.Types.ObjectId,ref:"User"}]
 })
 
 const User = mongoose.model("User",user_schema)

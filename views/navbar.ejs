@@ -37,6 +37,11 @@
       background-color: rgb(240, 240, 240);
       border-radius: 5px;
     }
+    #notif-div {
+
+      right: 0;
+      left: auto;
+    }
     
   </style>
   <nav class="navbar navbar-expand-lg navbar-light bg-light" style="background: rgb(246,223,244); background: radial-gradient(circle, rgba(246,223,244,1) 0%, rgba(249,245,235,1) 100%);">
@@ -74,7 +79,7 @@
       <div class="ml-auto align-items-center">
         <!-- Profil Resmi, İsim-Soyisim -->
         <% if (user) { %>
-          <div class="nav-item dropdown mr-3" style="cursor: pointer;">
+          <div class="nav-item dropdown mr-3" style="cursor: pointer;display: flex; flex-direction: row; align-items: center; ">
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="display: flex;justify-content: center; align-items: center;color:rgb(79, 78, 78); font-size: 19px;">
               <img src="<%= user.image ?? '/images/default_avatar.png' %>" alt="User Avatar" style="width: 32px; height: 32px; border-radius: 50%; margin-right: 5px;">
               <p class="m-0 ml-1">
@@ -87,6 +92,16 @@
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="/logout">Log Out</a>
             </div>
+            <div class="dropdown" style="margin-left: 10px; margin-right: 25px;">
+              <button class="btn dropdown-toggle" type="button" id="notificationDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <img src="/images/bell.png" width="24px" height="24px">
+                  <span id="notification_count" style="color: red; font-size: 23px; margin-left: 8px;">0</span>
+              </button>
+              <div id="notif-div" class="dropdown-menu" aria-labelledby="notificationDropdown">
+                  
+
+              </div>
+            </div>
           </div>
         <% } %>
       </div>
@@ -94,6 +109,7 @@
   </nav>
   
   <script src="/scripts/search.js"></script>  
+  <script src="/scripts/get_notifications.js"></script>
 
 
 

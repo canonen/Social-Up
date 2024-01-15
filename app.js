@@ -8,6 +8,7 @@ const passport = require("./controllers/authentication")
 const flash = require("express-flash")
 const User = require("./models/user")
 const post_controller = require("./controllers/post-controller")
+const notification_controller = require("./controllers/notification_controller")
 
 
 app.use(express.json())
@@ -32,6 +33,7 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 
+
 app.use("/",(req,res,next)=>{
     if(!req.isAuthenticated()&&req.url!="/login"&&req.url!="/register"){
         return res.redirect("/login")
@@ -44,6 +46,7 @@ app.use("/",(req,res,next)=>{
 
 app.use("/",user_controller)
 app.use("/",post_controller)
+app.use("/",notification_controller)
 
 
 app.get("/",async (req,res)=>{

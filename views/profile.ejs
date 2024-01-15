@@ -15,6 +15,10 @@
           <p style="color: white; font-size: 20px;" class="ml-3">
             <%= targetUser.name.charAt(0).toUpperCase() + targetUser.name.slice(1) %> <%= targetUser.surname.charAt(0).toUpperCase() + targetUser.surname.slice(1) %>
           </p>
+          <% if (user._id.toString()!==targetUser._id.toString()) { %>
+            <img id="add-friend" data-postid="<%=user._id%>/<%=targetUser._id%>"  src="/images/add-user.png" style="margin-left: 20px;">
+          <% } %>
+          
         </div>
         
 
@@ -202,5 +206,6 @@
   <script src="/scripts/like_comment.js"></script>
   <script src="/scripts/delete_post.js"></script>
   <script src="/scripts/delete_comment.js"></script>
+  <script src = "/scripts/add_friend.js"></script>
 
 <%- include("footer.ejs") %>

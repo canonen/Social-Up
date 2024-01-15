@@ -8,6 +8,9 @@ const Post = require("../models/post.js")
 const path = require("path")
 const Comment =require("../models/comment.js")
 const { send } = require("process")
+const Friend = require("../models/friend.js")
+const Notification = require("../models/notification.js")
+
 
 //Multer
 const storage = multer.diskStorage({
@@ -76,7 +79,8 @@ router.post("/register",async(req,res)=>{
             email: body.email,
             password: hashed_password,
             image:null,
-            bg_image:null
+            bg_image:null,
+            friends:[]
         })
 
         try{
@@ -173,6 +177,80 @@ router.get("/search", async (req, res) => {
     console.log(users);
     res.json(users);
 });
+
+router.post("/add-friend",async(req,res)=>{
+    const currentDate = new Date();
+
+    const options = {
+    day: '2-digit',
+    month: '2-digit',
+    year: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+    second: 'numeric'
+    };
+
+    const formattedDate = currentDate.toLocaleString('tr-TR', options);
+
+
+
+    const tempFriendRequest = new Friend({
+        sender: req.body.sender,
+        receiver: req.body.receiver,
+        status: "pending"
+    })
+    console.log(tempFriendRequest)
+    try{
+        await tempFriendRequest.save()
+        const tempNotification = new Notification({
+            receiver:req.body.receiver,
+            sender:req.body.sender,
+            content:"friendRequest",
+            status:"unread",
+            createdAt:formattedDate
+        })
+        await tempNotification.save()
+    }catch(er){
+        console.log(er)
+        return
+    }
+    res.sendStatus(200)
+})
+
+router.post("/process-friend-request",async(req,res)=>{
+    const op = req.body.op
+    const target_id = req.body.target_id
+    const user_id = req.user._id
+    const notif_id = req.body.notif_id
+    try {
+        const friendRequest = await Friend.findOne({sender:target_id,receiver:user_id})
+        friendRequest.status = op.toString()
+        await friendRequest.save()
+        const notification = await Notification.findById(notif_id)
+        notification.status = "read"
+        await notification.save()
+
+        if (op.toString() === "accepted"){
+            const target_user = await User.findById(target_id)
+            const current_user = await User.findById(user_id)
+            
+            await target_user.friends.push(user_id)
+            await current_user.friends.push(target_id)
+            await target_user.save()
+            await current_user.save()
+            res.sendStatus(200)
+            
+        }
+             
+        
+        
+    }catch(er){
+        console.log(er)
+        return
+    }
+
+})
 
 
 module.exports = router
